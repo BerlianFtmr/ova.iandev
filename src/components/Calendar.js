@@ -23,6 +23,39 @@ const PHASE_STYLES = {
   },
 };
 
+// Mapping Ikon FontAwesome berdasarkan ID/Key Mood
+const MOOD_ICONS = {
+  // Sedih
+  sedih: "fa-regular fa-face-frown text-sky-500",
+  sad: "fa-regular fa-face-frown text-sky-500",
+  "😢": "fa-regular fa-face-frown text-sky-500",
+  "😭": "fa-regular fa-face-frown text-sky-500",
+
+  // Senang
+  senang: "fa-regular fa-face-smile text-amber-500",
+  happy: "fa-regular fa-face-smile text-amber-500",
+  "😊": "fa-regular fa-face-smile text-amber-500",
+
+  // Biasa
+  biasa: "fa-regular fa-face-meh text-slate-500",
+  neutral: "fa-regular fa-face-meh text-slate-500",
+  "😐": "fa-regular fa-face-meh text-slate-500",
+
+  // Marah
+  marah: "fa-regular fa-face-angry text-rose-500",
+  angry: "fa-regular fa-face-angry text-rose-500",
+  "😡": "fa-regular fa-face-angry text-rose-500",
+
+  // Malas / Lelah
+  malas: "fa-regular fa-face-tired text-purple-500",
+  lelah: "fa-regular fa-face-tired text-purple-500",
+  tired: "fa-regular fa-face-tired text-purple-500",
+  lazy: "fa-regular fa-face-tired text-purple-500",
+  sloth: "fa-regular fa-face-tired text-purple-500",
+  "😫": "fa-regular fa-face-tired text-purple-500",
+  "😴": "fa-regular fa-face-tired text-purple-500",
+};
+
 export class CalendarComponent {
   constructor(containerId, onDateClick) {
     this.containerId = containerId;
@@ -73,7 +106,6 @@ export class CalendarComponent {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-    // PERBAIKAN: Gunakan local timezone untuk mencocokkan 'today'
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
@@ -88,6 +120,7 @@ export class CalendarComponent {
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
+      // 1. Hitung Fase Hormonal
       let phaseKey = null;
       if (
         cycles &&
@@ -97,6 +130,30 @@ export class CalendarComponent {
         const phaseInfo = getPhaseForDate(dateStr, cycles, avgCycle);
         if (phaseInfo && phaseInfo.phase && phaseInfo.phase !== "unrecorded") {
           phaseKey = phaseInfo.phase;
+        }
+      }
+
+      // 2. Ambil & Cocokkan Catatan Mood untuk Tanggal Ini
+      const moodEntry = Array.isArray(moodEntries)
+        ? moodEntries.find((m) => m.date === dateStr)
+        : null;
+
+      let moodIconClass = null;
+      if (moodEntry) {
+        const rawMood = String(
+          moodEntry.mood ||
+            moodEntry.moodId ||
+            moodEntry.type ||
+            moodEntry.emoji ||
+            "",
+        )
+          .toLowerCase()
+          .trim();
+
+        if (rawMood && MOOD_ICONS[rawMood]) {
+          moodIconClass = MOOD_ICONS[rawMood];
+        } else if (rawMood) {
+          moodIconClass = "fa-regular fa-note-sticky text-purple-400";
         }
       }
 
@@ -112,19 +169,21 @@ export class CalendarComponent {
         baseClasses += " border-slate-100 bg-white hover:border-rose-300";
       }
 
-      // Memberi garis tegas untuk hari ini
       if (dateStr === todayStr) {
         baseClasses += " ring-2 ring-rose-500";
       }
 
       cell.className = baseClasses;
 
+      // Render elemen sel
       cell.innerHTML = `
         <div class="flex items-center justify-between">
           <span class="text-xs font-extrabold ${dateStr === todayStr ? "text-rose-600" : style ? style.text : "text-slate-700"}">${day}</span>
           ${style ? `<span class="w-2.5 h-2.5 rounded-full ${style.dot} shadow-sm"></span>` : ""}
         </div>
-        <div class="flex items-center gap-1 justify-end"></div>
+        <div class="flex items-center justify-end">
+          ${moodIconClass ? `<i class="${moodIconClass} text-base sm:text-lg"></i>` : ""}
+        </div>
       `;
 
       cell.addEventListener("click", () => {
