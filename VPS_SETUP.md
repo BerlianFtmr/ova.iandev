@@ -1,6 +1,6 @@
-# 🚀 VPS Setup Guide - LilyBloom Deployment
+# 🚀 VPS Setup Guide - ova.iandev Deployment
 
-**Panduan lengkap setup VPS dari nol untuk deploy LilyBloom container**
+**Panduan lengkap setup VPS dari nol untuk deploy ova.iandev container**
 
 ## 📋 Prerequisites
 
@@ -47,11 +47,11 @@ ufw status
 
 ```bash
 # Create user
-adduser lilybloom
-usermod -aG sudo lilybloom
+adduser ova.iandev
+usermod -aG sudo ova.iandev
 
 # Switch ke user baru
-su - lilybloom
+su - ova.iandev
 ```
 
 ---
@@ -70,7 +70,7 @@ sudo usermod -aG docker $USER
 
 # Logout & login again untuk apply group changes
 exit
-ssh lilybloom@your-vps-ip  # atau root@your-vps-ip
+ssh ova.iandev@your-vps-ip  # atau root@your-vps-ip
 ```
 
 ### 2.2 Verify Docker Installation
@@ -117,11 +117,11 @@ sudo mkdir -p /var/www
 cd /var/www
 
 # Clone repository (ganti dengan repo URL Anda)
-sudo git clone https://github.com/YOUR_USERNAME/period-tracker.git lilybloom
+sudo git clone https://github.com/YOUR_USERNAME/period-tracker.git ova.iandev
 
 # Setup ownership
-sudo chown -R $USER:$USER /var/www/lilybloom
-cd /var/www/lilybloom
+sudo chown -R $USER:$USER /var/www/ova.iandev
+cd /var/www/ova.iandev
 
 # Cek files
 ls -la
@@ -134,26 +134,26 @@ ls -la
 ### 4.1 Build Docker Image
 
 ```bash
-cd /var/www/lilybloom
+cd /var/www/ova.iandev
 
 # Build image
-docker build -t lilybloom:latest .
+docker build -t ova.iandev:latest .
 
 # Verify image
-docker images | grep lilybloom
+docker images | grep ova.iandev
 ```
 
 ### 4.2 Test Run Container
 
 ```bash
 # Run container
-docker run -d --name lilybloom-test -p 8081:80 lilybloom:latest
+docker run -d --name ova.iandev-test -p 8081:80 ova.iandev:latest
 
 # Cek status
-docker ps | grep lilybloom-test
+docker ps | grep ova.iandev-test
 
 # Cek logs
-docker logs lilybloom-test
+docker logs ova.iandev-test
 
 # Test dari dalam VPS
 curl http://localhost:8081
@@ -166,10 +166,10 @@ curl http://localhost:8081
 
 ```bash
 # Stop
-docker stop lilybloom-test
+docker stop ova.iandev-test
 
 # Remove
-docker rm lilybloom-test
+docker rm ova.iandev-test
 ```
 
 ---
@@ -179,7 +179,7 @@ docker rm lilybloom-test
 ### 5.1 Deploy dengan Docker Compose
 
 ```bash
-cd /var/www/lilybloom
+cd /var/www/ova.iandev
 
 # Start production container
 docker-compose up -d
@@ -188,10 +188,10 @@ docker-compose up -d
 docker-compose ps
 
 # Cek logs
-docker-compose logs -f lilybloom-app
+docker-compose logs -f ova.iandev-app
 
 # Verify container running
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 ```
 
 ### 5.2 Setup Auto-Start
@@ -199,7 +199,7 @@ docker ps | grep lilybloom
 ```bash
 # Container sudah auto-start (dari docker-compose.yml)
 # Cek restart policy
-docker inspect lilybloom-period-tracker | grep RestartPolicy -A 2
+docker inspect ova.iandev-period-tracker | grep RestartPolicy -A 2
 
 # Test reboot VPS
 sudo reboot
@@ -217,7 +217,7 @@ docker ps
 1. Login ke [Cloudflare Dashboard](https://dash.cloudflare.com/)
 2. Navigate ke **Access → Tunnels**
 3. Click **Create Tunnel**
-4. Name: `lilybloom-production`
+4. Name: `ova.iandev-production`
 5. Select **Docker** sebagai installation method
 
 ### 6.2 Install Cloudflared di VPS
@@ -240,16 +240,17 @@ cloudflared --version
 cloudflared tunnel login
 
 # Create tunnel (catat TUNNEL_ID)
-cloudflared tunnel create lilybloom-production
+cloudflared tunnel create ova.iandev-production
 
 # Setup config file
 nano ~/.cloudflared/config.yml
 ```
 
 **config.yml content:**
+
 ```yaml
 tunnel: YOUR_TUNNEL_ID
-credentials-file: /home/lilybloom/.cloudflared/YOUR_TUNNEL_ID.json
+credentials-file: /home/ova.iandev/.cloudflared/YOUR_TUNNEL_ID.json
 
 ingress:
   - hostname: period.yourdomain.com
@@ -316,13 +317,13 @@ curl http://localhost:8081/health
 ```bash
 # SSH ke VPS
 ssh user@your-vps-ip
-cd /var/www/lilybloom
+cd /var/www/ova.iandev
 
 # Pull latest changes
 git pull origin main
 
 # Rebuild image
-docker build -t lilybloom:latest .
+docker build -t ova.iandev:latest .
 
 # Restart container
 docker-compose down
@@ -331,36 +332,37 @@ docker-compose up -d
 
 ### 8.2 Auto-Update Script (Optional)
 
-Buat file `/var/www/lilybloom/update.sh`:
+Buat file `/var/www/ova.iandev/update.sh`:
 
 ```bash
 #!/bin/bash
 set -e
 
-echo "🔄 Updating LilyBloom..."
+echo "🔄 Updating ova.iandev..."
 
-cd /var/www/lilybloom
+cd /var/www/ova.iandev
 
 # Pull latest
 git pull origin main
 
 # Rebuild
-docker build -t lilybloom:latest .
+docker build -t ova.iandev:latest .
 
 # Restart
 docker-compose down
 docker-compose up -d
 
 echo "✓ Update completed!"
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 ```
 
 Jadikan executable:
+
 ```bash
-chmod +x /var/www/lilybloom/update.sh
+chmod +x /var/www/ova.iandev/update.sh
 
 # Run update
-/var/www/lilybloom/update.sh
+/var/www/ova.iandev/update.sh
 ```
 
 ---
@@ -371,10 +373,10 @@ chmod +x /var/www/lilybloom/update.sh
 
 ```bash
 # Cek resource usage
-docker stats lilybloom-period-tracker
+docker stats ova.iandev-period-tracker
 
 # Cek logs real-time
-docker logs -f lilybloom-period-tracker
+docker logs -f ova.iandev-period-tracker
 
 # Cek disk usage
 docker system df
@@ -387,8 +389,8 @@ docker system prune -a
 
 ```bash
 # Cek nginx logs di dalam container
-docker exec lilybloom-period-tracker cat /var/log/nginx/access.log
-docker exec lilybloom-period-tracker cat /var/log/nginx/error.log
+docker exec ova.iandev-period-tracker cat /var/log/nginx/access.log
+docker exec ova.iandev-period-tracker cat /var/log/nginx/error.log
 
 # Atau use docker-compose logs
 docker-compose logs --tail=100 -f
@@ -397,18 +399,20 @@ docker-compose logs --tail=100 -f
 ### 9.3 Backup Strategy
 
 **Backup Docker Images:**
+
 ```bash
 # Save image
-docker save lilybloom:latest | gzip > lilybloom-backup.tar.gz
+docker save ova.iandev:latest | gzip > ova.iandev-backup.tar.gz
 
 # Copy ke backup location
-scp lilybloom-backup.tar.gz user@backup-server:/backups/
+scp ova.iandev-backup.tar.gz user@backup-server:/backups/
 
 # Load image (restore)
-docker load < lilybloom-backup.tar.gz
+docker load < ova.iandev-backup.tar.gz
 ```
 
 **Backup Git Repository:**
+
 ```bash
 # Push ke GitHub (remote backup)
 git push origin main --all --tags
@@ -477,28 +481,28 @@ docker ps -a
 docker images
 
 # Stop container
-docker stop lilybloom-period-tracker
+docker stop ova.iandev-period-tracker
 
 # Start container
-docker start lilybloom-period-tracker
+docker start ova.iandev-period-tracker
 
 # Restart container
-docker restart lilybloom-period-tracker
+docker restart ova.iandev-period-tracker
 
 # Remove container
-docker rm lilybloom-period-tracker
+docker rm ova.iandev-period-tracker
 
 # Cek logs
-docker logs -f lilybloom-period-tracker
+docker logs -f ova.iandev-period-tracker
 
 # Execute command in container
-docker exec -it lilybloom-period-tracker sh
+docker exec -it ova.iandev-period-tracker sh
 
 # Build image
-docker build -t lilybloom:latest .
+docker build -t ova.iandev:latest .
 
 # Remove image
-docker rmi lilybloom:latest
+docker rmi ova.iandev:latest
 ```
 
 ### Docker Compose Commands
@@ -517,7 +521,7 @@ docker-compose restart
 docker-compose logs -f
 
 # Scale services
-docker-compose up -d --scale lilybloom-app=2
+docker-compose up -d --scale ova.iandev-app=2
 ```
 
 ### System Commands
@@ -553,13 +557,13 @@ sudo shutdown -h now
 
 ```bash
 # Cek logs
-docker logs lilybloom-period-tracker
+docker logs ova.iandev-period-tracker
 
 # Cek nginx config
-docker exec lilybloom-period-tracker nginx -t
+docker exec ova.iandev-period-tracker nginx -t
 
 # Restart container
-docker restart lilybloom-period-tracker
+docker restart ova.iandev-period-tracker
 ```
 
 ### Problem: Port 8081 tidak accessible
@@ -595,7 +599,7 @@ sudo systemctl restart cloudflared
 free -h
 
 # Cek container resource
-docker stats lilybloom-period-tracker
+docker stats ova.iandev-period-tracker
 
 # Increase swap (temporary)
 sudo fallocate -l 2G /swapfile
@@ -620,15 +624,16 @@ Setelah VPS setup selesai:
 
 ## 🎉 Deployment Complete!
 
-Your LilyBloom app is now live!
+Your ova.iandev app is now live!
 
 **Access URL:** https://period.yourdomain.com
 
 **Health Check:** https://period.yourdomain.com/health
 
 **Container Status:**
+
 ```bash
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 ```
 
 Happy tracking! 🌸

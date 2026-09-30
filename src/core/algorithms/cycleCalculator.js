@@ -4,8 +4,8 @@
 export function formatDateLocal(dateInput) {
   const d = new Date(dateInput);
   const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -38,7 +38,9 @@ export function calculateAverageCycleLength(cycles) {
   }
 
   // Pastikan terurut ascending berdasarkan startDate
-  const sorted = [...cycles].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const sorted = [...cycles].sort(
+    (a, b) => new Date(a.startDate) - new Date(b.startDate),
+  );
   let totalCycleDays = 0;
   let gapsCount = 0;
 
@@ -54,23 +56,40 @@ export function calculateAverageCycleLength(cycles) {
 /**
  * Menghitung rata-rata durasi lama pendarahan haid
  */
+/**
+ * Menghitung rata-rata durasi lama pendarahan haid
+ * HANYA menghitung dari siklus yang sudah selesai (memiliki endDate)
+ */
 export function calculateAveragePeriodDuration(cycles) {
   if (!cycles || cycles.length === 0) {
     return 5; // Default 5 hari
   }
 
-  const totalDuration = cycles.reduce((acc, cycle) => {
+  // Filter: Hanya ambil siklus yang sudah memiliki tanggal selesai
+  const completedCycles = cycles.filter(
+    (cycle) => cycle.endDate && !cycle.isOngoing,
+  );
+
+  // Jika belum ada siklus yang selesai satupun, kembalikan nilai default
+  if (completedCycles.length === 0) {
+    return 5;
+  }
+
+  const totalDuration = completedCycles.reduce((acc, cycle) => {
     const duration = getDaysDiff(cycle.startDate, cycle.endDate) + 1;
     return acc + duration;
   }, 0);
 
-  return Math.round(totalDuration / cycles.length);
+  return Math.round(totalDuration / completedCycles.length);
 }
 
 /**
  * Menghitung estimasi tanggal mulai haid berikutnya
  */
-export function projectNextPeriodStart(latestCycleStartDate, avgCycleLength = 28) {
+export function projectNextPeriodStart(
+  latestCycleStartDate,
+  avgCycleLength = 28,
+) {
   if (!latestCycleStartDate) return null;
   return addDays(latestCycleStartDate, avgCycleLength);
 }

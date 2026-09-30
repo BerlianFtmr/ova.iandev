@@ -1,4 +1,4 @@
-const DB_NAME = 'LilyBloomDB';
+const DB_NAME = "ova.iandevDB";
 const DB_VERSION = 1;
 
 class DBService {
@@ -12,14 +12,14 @@ class DBService {
 
       request.onupgradeneeded = (e) => {
         const db = e.target.result;
-        if (!db.objectStoreNames.contains('cycles')) {
-          db.createObjectStore('cycles', { keyPath: 'id' });
+        if (!db.objectStoreNames.contains("cycles")) {
+          db.createObjectStore("cycles", { keyPath: "id" });
         }
-        if (!db.objectStoreNames.contains('moodEntries')) {
-          db.createObjectStore('moodEntries', { keyPath: 'date' });
+        if (!db.objectStoreNames.contains("moodEntries")) {
+          db.createObjectStore("moodEntries", { keyPath: "date" });
         }
-        if (!db.objectStoreNames.contains('settings')) {
-          db.createObjectStore('settings', { keyPath: 'key' });
+        if (!db.objectStoreNames.contains("settings")) {
+          db.createObjectStore("settings", { keyPath: "key" });
         }
       };
 
@@ -29,7 +29,7 @@ class DBService {
       };
 
       request.onerror = (e) => {
-        console.error('IndexedDB init error:', e.target.error);
+        console.error("IndexedDB init error:", e.target.error);
         reject(e.target.error);
       };
     });
@@ -45,8 +45,8 @@ class DBService {
   async saveCycle(cycle) {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('cycles', 'readwrite');
-      const store = tx.objectStore('cycles');
+      const tx = db.transaction("cycles", "readwrite");
+      const store = tx.objectStore("cycles");
 
       const cycleData = { ...cycle };
       if (!cycleData.id) {
@@ -62,8 +62,8 @@ class DBService {
   async getCycles() {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('cycles', 'readonly');
-      const store = tx.objectStore('cycles');
+      const tx = db.transaction("cycles", "readonly");
+      const store = tx.objectStore("cycles");
       const req = store.getAll();
 
       req.onsuccess = () => {
@@ -78,8 +78,8 @@ class DBService {
   async getMoodEntries() {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('moodEntries', 'readonly');
-      const store = tx.objectStore('moodEntries');
+      const tx = db.transaction("moodEntries", "readonly");
+      const store = tx.objectStore("moodEntries");
       const req = store.getAll();
       req.onsuccess = () => resolve(req.result || []);
       req.onerror = (e) => reject(e.target.error);
@@ -89,8 +89,8 @@ class DBService {
   async saveMoodEntry(entry) {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('moodEntries', 'readwrite');
-      const store = tx.objectStore('moodEntries');
+      const tx = db.transaction("moodEntries", "readwrite");
+      const store = tx.objectStore("moodEntries");
       const req = store.put(entry);
       req.onsuccess = () => resolve(req.result);
       req.onerror = (e) => reject(e.target.error);
@@ -100,8 +100,8 @@ class DBService {
   async deleteCycle(id) {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('cycles', 'readwrite');
-      const store = tx.objectStore('cycles');
+      const tx = db.transaction("cycles", "readwrite");
+      const store = tx.objectStore("cycles");
       const req = store.delete(id);
       req.onsuccess = () => resolve(req.result);
       req.onerror = (e) => reject(e.target.error);
@@ -111,8 +111,8 @@ class DBService {
   async getSettings() {
     const db = await this.getDB();
     return new Promise((resolve, reject) => {
-      const tx = db.transaction('settings', 'readonly');
-      const store = tx.objectStore('settings');
+      const tx = db.transaction("settings", "readonly");
+      const store = tx.objectStore("settings");
       const req = store.getAll();
       req.onsuccess = () => resolve(req.result || []);
       req.onerror = () => resolve([]);

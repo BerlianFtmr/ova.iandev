@@ -1,18 +1,18 @@
 # ========================================
-# LilyBloom Period & Mood Journal - Docker Compose
+# ova.iandev Period & Mood Journal - Docker Compose
 # Pendekatan 1: Satu Container Per Project
 # ========================================
 
-version: '3.8'
+version: "3.8"
 
 services:
-  # Service utama LilyBloom
-  lilybloom-app:
+  # Service utama ova.iandev
+  ova.iandev-app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: lilybloom:latest
-    container_name: lilybloom-period-tracker
+    image: ova.iandev:latest
+    container_name: ova.iandev-period-tracker
 
     # Restart policy
     restart: unless-stopped
@@ -33,11 +33,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'        # Max 50% CPU
-          memory: 128M      # Max 128MB RAM
+          cpus: "0.5" # Max 50% CPU
+          memory: 128M # Max 128MB RAM
         reservations:
-          cpus: '0.25'       # Min 25% CPU
-          memory: 64M       # Min 64MB RAM
+          cpus: "0.25" # Min 25% CPU
+          memory: 64M # Min 64MB RAM
 
     # Volume untuk logs (opsional)
     volumes:
@@ -45,11 +45,19 @@ services:
 
     # Network
     networks:
-      - lilybloom-network
+      - ova.iandev-network
 
     # Healthcheck override (opsional)
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost/",
+        ]
       interval: 30s
       timeout: 3s
       retries: 3
@@ -57,7 +65,7 @@ services:
 
 # Networks
 networks:
-  lilybloom-network:
+  ova.iandev-network:
     driver: bridge
 
 # Volumes

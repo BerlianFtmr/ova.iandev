@@ -1,12 +1,13 @@
-# ✅ Deployment Checklist - LilyBloom
+# ✅ Deployment Checklist - ova.iandev
 
-**Quick checklist untuk deploy LilyBloom ke VPS dengan Docker**
+**Quick checklist untuk deploy ova.iandev ke VPS dengan Docker**
 
 ---
 
 ## 📋 Pre-Deployment Checklist
 
 ### Local Setup
+
 - [ ] Docker Desktop installed & running
 - [ ] Git repository initialized
 - [ ] Code committed with proper format (YYYY-MM-DD - message)
@@ -14,6 +15,7 @@
 - [ ] Deployment scripts created (deploy.sh/deploy.ps1)
 
 ### Repository Check
+
 - [ ] All files committed to git
 - [ ] GitHub repository created
 - [ ] Remote origin added: `git remote add origin <repo-url>`
@@ -24,6 +26,7 @@
 ## 🚀 Deployment Steps
 
 ### Step 1: Push to GitHub
+
 ```bash
 # Verify semua files committed
 git status
@@ -36,6 +39,7 @@ git push origin main
 - [ ] Verify di GitHub repository
 
 ### Step 2: VPS Preparation
+
 ```bash
 # SSH ke VPS
 ssh user@your-vps-ip
@@ -57,17 +61,18 @@ sudo apt install -y git
 - [ ] User added to docker group
 
 ### Step 3: Clone & Build on VPS
+
 ```bash
 # Clone repository
 cd /var/www
-sudo git clone https://github.com/YOUR_USERNAME/period-tracker.git lilybloom
-cd lilybloom
+sudo git clone https://github.com/YOUR_USERNAME/period-tracker.git ova.iandev
+cd ova.iandev
 
 # Build Docker image
-docker build -t lilybloom:latest .
+docker build -t ova.iandev:latest .
 
 # Test run
-docker run -d --name lilybloom-test -p 8081:80 lilybloom:latest
+docker run -d --name ova.iandev-test -p 8081:80 ova.iandev:latest
 ```
 
 - [ ] Repository cloned successfully
@@ -76,16 +81,17 @@ docker run -d --name lilybloom-test -p 8081:80 lilybloom:latest
 - [ ] Test access: http://your-vps-ip:8081
 
 ### Step 4: Production Deployment
+
 ```bash
 # Stop test container
-docker stop lilybloom-test
-docker rm lilybloom-test
+docker stop ova.iandev-test
+docker rm ova.iandev-test
 
 # Deploy dengan docker-compose
 docker-compose up -d
 
 # Verify running
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 docker-compose logs -f
 ```
 
@@ -96,15 +102,17 @@ docker-compose logs -f
 ### Step 5: Cloudflare Zero Trust Setup
 
 #### Cloudflare Dashboard
+
 - [ ] Login to Cloudflare Dashboard
 - [ ] Navigate to Access → Tunnels
-- [ ] Create Tunnel: `lilybloom-production`
+- [ ] Create Tunnel: `ova.iandev-production`
 - [ ] Setup Public Hostname:
   - Subdomain: `period` (or custom)
   - Domain: `yourdomain.com`
   - Service: `http://localhost:8081`
 
 #### VPS Setup
+
 ```bash
 # Install cloudflared
 wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
@@ -123,6 +131,7 @@ nano ~/.cloudflared/config.yml
 - [ ] Service installed & started: `sudo systemctl start cloudflared`
 
 ### Step 6: Final Verification
+
 ```bash
 # Test HTTPS access
 curl -I https://period.yourdomain.com
@@ -131,7 +140,7 @@ curl -I https://period.yourdomain.com
 curl http://localhost:8081/health
 
 # Check container status
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 ```
 
 - [ ] HTTPS access works
@@ -144,16 +153,19 @@ docker ps | grep lilybloom
 ## 🔧 Post-Deployment Setup
 
 ### Monitoring
+
 - [ ] Setup uptime monitoring (UptimeRobot, etc.)
 - [ ] Configure log rotation (optional)
 - [ ] Setup backup routine (optional)
 
 ### Security
+
 - [ ] Firewall configured: `sudo ufw enable`
 - [ ] SSH key authentication (optional)
 - [ ] Fail2ban installed (optional)
 
 ### Documentation
+
 - [ ] Document VPS credentials safely
 - [ ] Document SSH keys location
 - [ ] Document domain & tunnel settings
@@ -163,28 +175,30 @@ docker ps | grep lilybloom
 ## 📊 Deployment Summary
 
 **Deployment Info:**
+
 - Repository: https://github.com/YOUR_USERNAME/period-tracker.git
 - VPS IP: your-vps-ip
 - App URL: https://period.yourdomain.com
 - Container Port: 8081
-- Docker Image: lilybloom:latest
+- Docker Image: ova.iandev:latest
 
 **Commands Reference:**
+
 ```bash
 # SSH ke VPS
 ssh user@your-vps-ip
 
 # Cek container status
-docker ps | grep lilybloom
+docker ps | grep ova.iandev
 
 # Cek logs
-docker logs -f lilybloom-period-tracker
+docker logs -f ova.iandev-period-tracker
 
 # Restart container
-docker restart lilybloom-period-tracker
+docker restart ova.iandev-period-tracker
 
 # Update deployment
-cd /var/www/lilybloom
+cd /var/www/ova.iandev
 git pull origin main
 docker-compose down
 docker-compose up -d --build
@@ -194,19 +208,20 @@ docker-compose up -d --build
 
 ## 🆘 Troubleshooting Quick Guide
 
-| Problem | Solution |
-|---------|----------|
-| Container not starting | `docker logs lilybloom-period-tracker` |
-| Port 8081 blocked | `sudo ufw allow 8081/tcp` |
-| HTTPS not working | Check Cloudflare tunnel status |
-| Out of memory | Increase VPS RAM or reduce container limits |
-| Need update | `git pull && docker-compose up -d --build` |
+| Problem                | Solution                                    |
+| ---------------------- | ------------------------------------------- |
+| Container not starting | `docker logs ova.iandev-period-tracker`     |
+| Port 8081 blocked      | `sudo ufw allow 8081/tcp`                   |
+| HTTPS not working      | Check Cloudflare tunnel status              |
+| Out of memory          | Increase VPS RAM or reduce container limits |
+| Need update            | `git pull && docker-compose up -d --build`  |
 
 ---
 
 ## ✨ Success Criteria
 
 Deployment successful jika:
+
 - ✅ HTTPS URL accessible
 - ✅ PWA features work (offline mode, service worker)
 - ✅ IndexedDB storing data
@@ -221,6 +236,7 @@ Deployment successful jika:
 ## 🎯 Next Steps
 
 After successful deployment:
+
 1. Test all features thoroughly
 2. Monitor for 24-48 hours
 3. Gather user feedback
@@ -229,9 +245,9 @@ After successful deployment:
 
 ---
 
-**Deployment Date:** _______________
-**Deployed By:** _______________
-**Verified By:** _______________
+**Deployment Date:** ******\_\_\_******
+**Deployed By:** ******\_\_\_******
+**Verified By:** ******\_\_\_******
 
 ---
 

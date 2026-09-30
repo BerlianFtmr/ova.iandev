@@ -1,14 +1,14 @@
 # ========================================
-# LilyBloom - PowerShell Deployment Script untuk Windows
+# ova.iandev - PowerShell Deployment Script untuk Windows
 # ========================================
 
 # Configuration
 $REPO_URL = "https://github.com/YOUR_USERNAME/period-tracker.git"  # Ganti dengan repo URL Anda
 $VPS_USER = "root"  # Ganti dengan VPS user Anda
 $VPS_HOST = "your-vps-ip"  # Ganti dengan VPS IP Anda
-$VPS_PATH = "/var/www/lilybloom"  # Path di VPS
-$IMAGE_NAME = "lilybloom"
-$CONTAINER_NAME = "lilybloom-period-tracker"
+$VPS_PATH = "/var/www/ova.iandev"  # Path di VPS
+$IMAGE_NAME = "ova.iandev"
+$CONTAINER_NAME = "ova.iandev-period-tracker"
 
 # Colors for output (PowerShell 7+)
 function Write-ColorOutput($ForegroundColor) {
@@ -21,7 +21,7 @@ function Write-ColorOutput($ForegroundColor) {
 }
 
 Write-ColorOutput Green "=================================="
-Write-ColorOutput Green "LilyBloom Deployment Script"
+Write-ColorOutput Green "ova.iandev Deployment Script"
 Write-ColorOutput Green "=================================="
 
 # Function untuk print step
@@ -46,8 +46,8 @@ Read-Host -Prompt "Press Enter untuk lanjut ke deployment VPS..."
 
 # Step 3: Save image to tar
 Print-Step "Step 3: Saving Docker image..."
-docker save "${IMAGE_NAME}:latest" -o lilybloom.tar
-Write-ColorOutput Green "✓ Image saved to lilybloom.tar"
+docker save "${IMAGE_NAME}:latest" -o ova.iandev.tar
+Write-ColorOutput Green "✓ Image saved to ova.iandev.tar"
 
 # Step 4: Copy files to VPS (Butuh OpenSSH atau PuTTY's pscp)
 Print-Step "Step 4: Copying files to VPS ($VPS_HOST)..."
@@ -56,12 +56,12 @@ Print-Step "Step 4: Copying files to VPS ($VPS_HOST)..."
 $scpAvailable = Get-Command scp -ErrorAction SilentlyContinue
 
 if ($scpAvailable) {
-    scp lilybloom.tar docker-compose.yml "${VPS_USER}@${VPS_HOST}:${VPS_PATH}/"
+    scp ova.iandev.tar docker-compose.yml "${VPS_USER}@${VPS_HOST}:${VPS_PATH}/"
     Write-ColorOutput Green "✓ Files copied to VPS"
 } else {
     Write-ColorOutput Yellow "⚠ SCP not found. Please install OpenSSH or use PuTTY's pscp"
     Write-ColorOutput Yellow "Manual upload required:"
-    Write-Output "  - Upload lilybloom.tar dan docker-compose.yml ke $VPS_PATH"
+    Write-Output "  - Upload ova.iandev.tar dan docker-compose.yml ke $VPS_PATH"
     Read-Host -Prompt "Press Enter after manual upload..."
 }
 
@@ -77,7 +77,7 @@ set -e
 cd $VPS_PATH
 
 # Load Docker image
-docker load -i lilybloom.tar
+docker load -i ova.iandev.tar
 
 # Stop existing container
 docker stop $CONTAINER_NAME 2>/dev/null || true
@@ -87,7 +87,7 @@ docker rm $CONTAINER_NAME 2>/dev/null || true
 docker-compose up -d
 
 # Cleanup
-rm lilybloom.tar
+rm ova.iandev.tar
 
 echo "Deployment completed!"
 docker ps
@@ -98,13 +98,13 @@ docker ps
     Write-ColorOutput Yellow "⚠ SSH not found. Manual SSH required:"
     Write-Output "  ssh ${VPS_USER}@${VPS_HOST}"
     Write-Output "  cd $VPS_PATH"
-    Write-Output "  docker load -i lilybloom.tar"
+    Write-Output "  docker load -i ova.iandev.tar"
     Write-Output "  docker-compose up -d"
 }
 
 # Step 6: Cleanup local tar
 Print-Step "Step 6: Cleaning up..."
-Remove-Item lilybloom.tar -Force
+Remove-Item ova.iandev.tar -Force
 Write-ColorOutput Green "✓ Cleanup completed"
 
 Write-ColorOutput Green "=================================="

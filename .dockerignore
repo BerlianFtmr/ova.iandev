@@ -42,3 +42,14 @@ Thumbs.db
 *.log
 .tmp/
 temp/
+
+.git
+.gitignore
+docs/
+*.md
+deploy.ps1
+deploy.sh
+docker-compose.yml
+Dockerfile
+package.json
+package-lock.json

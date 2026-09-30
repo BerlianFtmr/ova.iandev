@@ -1,13 +1,13 @@
 # ========================================
-# LilyBloom Period & Mood Journal - Dockerfile
+# ova.iandev Period & Mood Journal - Dockerfile
 # Base: nginx:alpine (Ultra-light static server)
 # ========================================
 
 FROM nginx:alpine
 
 # Labels untuk metadata
-LABEL maintainer="LilyBloom Team"
-LABEL description="LilyBloom Period & Mood Journal - PWA Static Web App"
+LABEL maintainer="ova.iandev Team"
+LABEL description="ova.iandev Period & Mood Journal - PWA Static Web App"
 LABEL version="1.2.0"
 
 # Buat direktori untuk nginx logs (opsional - untuk debugging)

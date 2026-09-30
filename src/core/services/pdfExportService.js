@@ -1,5 +1,9 @@
-import { calculateAverageCycleLength, calculateAveragePeriodDuration, getDaysDiff } from '../algorithms/cycleCalculator.js';
-import { analyzeMoodByPhase } from '../algorithms/moodAnalyzer.js';
+import {
+  calculateAverageCycleLength,
+  calculateAveragePeriodDuration,
+  getDaysDiff,
+} from "../algorithms/cycleCalculator.js";
+import { analyzeMoodByPhase } from "../algorithms/moodAnalyzer.js";
 
 /**
  * Generasi Laporan PDF Medis
@@ -9,16 +13,22 @@ export function generatePDFReport(cycles, moodEntries, settings = {}) {
   const avgCycle = calculateAverageCycleLength(cycles);
   const avgPeriod = calculateAveragePeriodDuration(cycles);
   const avgCycleLength = settings.avgCycleLength || avgCycle;
-  
+
   const moodAnalysis = analyzeMoodByPhase(moodEntries, cycles, avgCycleLength);
-  const printDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  const sortedCycles = [...cycles].sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+  const printDate = new Date().toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const sortedCycles = [...cycles].sort(
+    (a, b) => new Date(b.startDate) - new Date(a.startDate),
+  );
 
   // Buat kontainer HTML dinamis untuk dirender sebagai PDF
-  const container = document.createElement('div');
-  container.style.padding = '24px';
+  const container = document.createElement("div");
+  container.style.padding = "24px";
   container.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
-  container.style.color = '#2D1B2D'; // --text-primary
+  container.style.color = "#2D1B2D"; // --text-primary
 
   container.innerHTML = `
     <!-- Header -->
@@ -62,10 +72,14 @@ export function generatePDFReport(cycles, moodEntries, settings = {}) {
           </tr>
         </thead>
         <tbody>
-          ${sortedCycles.map((c, idx) => {
-            const dur = getDaysDiff(c.startDate, c.endDate) + 1;
-            const gap = idx < sortedCycles.length - 1 ? `${getDaysDiff(sortedCycles[idx + 1].startDate, c.startDate)} Hari` : '--';
-            return `
+          ${sortedCycles
+            .map((c, idx) => {
+              const dur = getDaysDiff(c.startDate, c.endDate) + 1;
+              const gap =
+                idx < sortedCycles.length - 1
+                  ? `${getDaysDiff(sortedCycles[idx + 1].startDate, c.startDate)} Hari`
+                  : "--";
+              return `
               <tr>
                 <td style="padding: 6px; border: 1px solid #E8D0D0;">${c.startDate}</td>
                 <td style="padding: 6px; border: 1px solid #E8D0D0;">${c.endDate}</td>
@@ -73,7 +87,8 @@ export function generatePDFReport(cycles, moodEntries, settings = {}) {
                 <td style="padding: 6px; border: 1px solid #E8D0D0;">${gap}</td>
               </tr>
             `;
-          }).join('')}
+            })
+            .join("")}
         </tbody>
       </table>
     </div>
@@ -93,7 +108,9 @@ export function generatePDFReport(cycles, moodEntries, settings = {}) {
           </tr>
         </thead>
         <tbody>
-          ${['menstrual', 'follicular', 'ovulation', 'luteal'].map(phase => `
+          ${["menstrual", "follicular", "ovulation", "luteal"]
+            .map(
+              (phase) => `
             <tr>
               <td style="padding: 6px; border: 1px solid #E8D0D0; text-align: left; font-weight: bold; text-transform: capitalize;">${phase}</td>
               <td style="padding: 6px; border: 1px solid #E8D0D0;">${moodAnalysis.counts[phase]?.happy || 0}</td>
@@ -102,24 +119,26 @@ export function generatePDFReport(cycles, moodEntries, settings = {}) {
               <td style="padding: 6px; border: 1px solid #E8D0D0;">${moodAnalysis.counts[phase]?.angry || 0}</td>
               <td style="padding: 6px; border: 1px solid #E8D0D0;">${moodAnalysis.counts[phase]?.lazy || 0}</td>
             </tr>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </tbody>
       </table>
     </div>
   `;
 
-// Di dalam src/core/services/pdfExportService.js
-const opt = {
-  margin: 0.4,
-  filename: `lilybloom_laporan_medis_${new Date().toISOString().split('T')[0]}.pdf`,
-  image: { type: 'jpeg', quality: 0.98 },
-  html2canvas: { scale: 2 },
-  jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-};
+  // Di dalam src/core/services/pdfExportService.js
+  const opt = {
+    margin: 0.4,
+    filename: `ova.iandev_laporan_medis_${new Date().toISOString().split("T")[0]}.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+  };
 
   if (window.html2pdf) {
     window.html2pdf().set(opt).from(container).save();
   } else {
-    console.error('Library html2pdf.js belum dimuat di HTML.');
+    console.error("Library html2pdf.js belum dimuat di HTML.");
   }
 }

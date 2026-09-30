@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ========================================
-# LilyBloom - Deployment Script untuk VPS
+# ova.iandev - Deployment Script untuk VPS
 # ========================================
 
 set -e  # Exit jika error
@@ -10,9 +10,9 @@ set -e  # Exit jika error
 REPO_URL="https://github.com/YOUR_USERNAME/period-tracker.git"  # Ganti dengan repo URL Anda
 VPS_USER="root"  # Ganti dengan VPS user Anda
 VPS_HOST="your-vps-ip"  # Ganti dengan VPS IP Anda
-VPS_PATH="/var/www/lilybloom"  # Path di VPS
-IMAGE_NAME="lilybloom"
-CONTAINER_NAME="lilybloom-period-tracker"
+VPS_PATH="/var/www/ova.iandev"  # Path di VPS
+IMAGE_NAME="ova.iandev"
+CONTAINER_NAME="ova.iandev-period-tracker"
 
 # Colors untuk output
 RED='\033[0;31m'
@@ -21,7 +21,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}==================================${NC}"
-echo -e "${GREEN}LilyBloom Deployment Script${NC}"
+echo -e "${GREEN}ova.iandev Deployment Script${NC}"
 echo -e "${GREEN}==================================${NC}"
 
 # Function untuk print step
@@ -45,12 +45,12 @@ read -p "Press Enter untuk lanjut ke deployment VPS..."
 
 # Step 3: Save image to tar
 print_step "Step 3: Saving Docker image..."
-docker save $IMAGE_NAME:latest -o lilybloom.tar
-echo -e "${GREEN}✓ Image saved to lilybloom.tar${NC}"
+docker save $IMAGE_NAME:latest -o ova.iandev.tar
+echo -e "${GREEN}✓ Image saved to ova.iandev.tar${NC}"
 
 # Step 4: Copy files to VPS
 print_step "Step 4: Copying files to VPS ($VPS_HOST)..."
-scp lilybloom.tar docker-compose.yml $VPS_USER@$VPS_HOST:$VPS_PATH/
+scp ova.iandev.tar docker-compose.yml $VPS_USER@$VPS_HOST:$VPS_PATH/
 echo -e "${GREEN}✓ Files copied to VPS${NC}"
 
 # Step 5: Deploy on VPS
@@ -60,7 +60,7 @@ ssh $VPS_USER@$VPS_HOST << EOF
     cd $VPS_PATH
 
     # Load Docker image
-    docker load -i lilybloom.tar
+    docker load -i ova.iandev.tar
 
     # Stop existing container
     docker stop $CONTAINER_NAME 2>/dev/null || true
@@ -70,7 +70,7 @@ ssh $VPS_USER@$VPS_HOST << EOF
     docker-compose up -d
 
     # Cleanup
-    rm lilybloom.tar
+    rm ova.iandev.tar
 
     echo "Deployment completed!"
     docker ps
@@ -80,7 +80,7 @@ echo -e "${GREEN}✓ Deployment completed successfully!${NC}"
 
 # Step 6: Cleanup local tar
 print_step "Step 6: Cleaning up..."
-rm lilybloom.tar
+rm ova.iandev.tar
 echo -e "${GREEN}✓ Cleanup completed${NC}"
 
 echo -e "\n${GREEN}==================================${NC}"
